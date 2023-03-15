@@ -7,15 +7,23 @@ Original file is located at
     https://colab.research.google.com/drive/1FaFjrE6-ZII5qif6EUgF_7okjrF0k2hV
 """
 
-"""Create an Image Classification Web App using PyTorch and Streamlit."""
 # import libraries
 from PIL import Image
 import streamlit as st
+import torch
+import torchvision
+import torchvision.transforms as transforms
+import torch.nn as nn
+
 
 # set title of app
 st.title("Bird Classifier")
 st.write("")
 
+# find device
+device = torch.device('cpu')
+torch.load("checkpoint-10.pkl", map_location=device)
+ 
 # enable users to upload images for the model to make predictions
 file_up = st.file_uploader("Upload an image", type = "jpg")
 
@@ -32,7 +40,7 @@ def predict(image):
     # create a 'ResNet' model
     resnet = torchvision.models.densenet161(weights='DEFAULT')
     resnet.fc = nn.Linear(2208, 555) # This will reinitialize the layer as well
-    state = torch.load('C:\Users\Ryan\Downloads\Bird-Classifier\checkpoint-10.pkl')
+    state = torch.load("checkpoint-10.pkl", map_location=device)
     resnet.load_state_dict(state['net'])
 
     # transform the input image through resizing, normalization
@@ -40,18 +48,16 @@ def predict(image):
         transforms.Resize(256),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
-        transforms.Normalize(
-            mean = [0.485, 0.456, 0.406],
-            std = [0.229, 0.224, 0.225]
-            )])
+        ])
 
     # load the image, pre-process it, and make predictions
     img = Image.open(image)
     batch_t = torch.unsqueeze(transform(img), 0)
     resnet.eval()
     out = resnet(batch_t)
+    print(max(out))
 
-    with open('C:\Users\Ryan\Downloads\Bird-Classifier\names.txt') as f:
+    with open("names4.txt") as f:
         classes = [line.strip() for line in f.readlines()]
 
     # return the top 5 predictions ranked by highest probabilities
