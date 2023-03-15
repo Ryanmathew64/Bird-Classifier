@@ -32,7 +32,7 @@ def predict(image):
     # create a 'ResNet' model
     resnet = torchvision.models.densenet161(weights='DEFAULT')
     resnet.fc = nn.Linear(2208, 555) # This will reinitialize the layer as well
-    state = torch.load('/checkpoint-10.pkl')
+    state = torch.load('C:\Users\Ryan\Downloads\Bird-Classifier\checkpoint-10.pkl')
     resnet.load_state_dict(state['net'])
 
     # transform the input image through resizing, normalization
@@ -51,7 +51,7 @@ def predict(image):
     resnet.eval()
     out = resnet(batch_t)
 
-    with open('/names.txt') as f:
+    with open('C:\Users\Ryan\Downloads\Bird-Classifier\names.txt') as f:
         classes = [line.strip() for line in f.readlines()]
 
     # return the top 5 predictions ranked by highest probabilities
