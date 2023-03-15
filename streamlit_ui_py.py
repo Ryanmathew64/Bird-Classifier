@@ -55,7 +55,6 @@ def predict(image):
     batch_t = torch.unsqueeze(transform(img), 0)
     resnet.eval()
     out = resnet(batch_t)
-    print(max(out))
 
     with open("names4.txt") as f:
         classes = [line.strip() for line in f.readlines()]
